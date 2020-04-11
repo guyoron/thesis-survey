@@ -1,9 +1,42 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous">
+    </script>
     <script>
-      var options = ["https://google.com", "https://facebook.com"]
-      window.location = options[Math.floor(Math.random() * options.length)];
+      var sheets = {
+        '1ukyT-JIAt5AQvFoDnkKMR9HZGKvetJPJjJdZKoX2RZ0': 'https://docs.google.com/spreadsheets/d/1ukyT-JIAt5AQvFoDnkKMR9HZGKvetJPJjJdZKoX2RZ0',
+        '1lQrmEXv4vGcXxmEL8XEq-lU2kg4w0nUc6Ht81wrHtBo': 'https://docs.google.com/spreadsheets/d/1lQrmEXv4vGcXxmEL8XEq-lU2kg4w0nUc6Ht81wrHtBo/edit',
+        '1CY-irFuvyJ0lR1PdbfEWNeJXpmufY7c3rYwJywuS5ek': 'https://docs.google.com/spreadsheets/d/1CY-irFuvyJ0lR1PdbfEWNeJXpmufY7c3rYwJywuS5ek/edit#gid=0',
+      }
+
+      var key = 'AIzaSyDhZ0VUDMl-tSofek_C3TIEmrkD8-yw0yw'
+      var urlPref = 'https://sheets.googleapis.com/v4/spreadsheets/'
+      var urlSuff = '/values/Sheet1!A:A?key=' + key
+
+      var gets = []
+      var results = {}
+
+      $.each(sheets, function(id, destination) {
+        gets.push($.get(urlPref + id + urlSuff, function(data) {
+          results[id] = data.values.length
+        }))
+      })
+      $.when.apply($,gets).then(function() {
+        var lowest = 1000000;
+        var lowestId;
+        $.each(results, function(id, value) {
+          if (value < lowest) {
+            lowestId = id
+            lowest = value
+          }
+        })
+
+        window.location = sheets[lowestId];
+      });
     </script>
     <meta charset="UTF-8">
     <title>Nivie's Survey</title>
